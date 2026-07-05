@@ -1,0 +1,17 @@
+services:
+  blog:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH_SECRET=${AUTH_SECRET}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - DATABASE_PATH=/app/data/blog.db
+      - R2_ENDPOINT=${R2_ENDPOINT}
+      - R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
+      - R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
+      - R2_BUCKET=${R2_BUCKET}
+      - R2_PUBLIC_BASE_URL=${R2_PUBLIC_BASE_URL}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
