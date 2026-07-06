@@ -1,76 +1,62 @@
 import Link from "next/link";
 import { db } from "@/lib/db/client";
 import { articles, collections } from "@/lib/db/schema";
-import { isNull, desc } from "drizzle-orm";
+import { desc, eq, ne } from "drizzle-orm";
+import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const allCollections = await db.select().from(collections);
+  const allCollections = await db
+    .select()
+    .from(collections)
+    .where(ne(collections.id, DEFAULT_COLLECTION_SLUG));
   const standaloneArticles = await db
     .select()
     .from(articles)
-    .where(isNull(articles.collectionId))
+    .where(eq(articles.collectionId, DEFAULT_COLLECTION_SLUG))
     .orderBy(desc(articles.publishedAt));
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      <header className="mb-12">
-        <h1 className="text-3xl font-bold">Blog</h1>
-        <p className="mt-2" style={{ color: "var(--ink-soft)" }}>
-          Articles and collections.
-        </p>
+    <main>
+      <header>
+        <h1>QED Online</h1>
       </header>
 
       {allCollections.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-lg font-semibold mb-4">Collections</h2>
-          <ul className="space-y-3">
+        <section>
+          <h2>Ausgaben</h2>
+          <ul>
             {allCollections.map((c) => (
-              <li key={c.id} className="border-b pb-3" style={{ borderColor: "var(--line)" }}>
-                <Link href={`/collections/${c.slug}`} className="font-medium hover:underline">
-                  {c.title}
-                </Link>
-                {c.passcodeHash && (
-                  <span
-                    className="ml-2 text-xs uppercase tracking-wide"
-                    style={{ color: "var(--ink-soft)" }}
-                  >
-                    locked
-                  </span>
-                )}
-                {c.description && (
-                  <p className="text-sm mt-1" style={{ color: "var(--ink-soft)" }}>
-                    {c.description}
-                  </p>
-                )}
+              <li key={c.id}>
+                <Link href={`/collections/${c.slug}`}>{c.title}</Link>
+                {/* {c.passcodeHash && <span>locked</span>} */}
+                {c.description && <p>{c.description}</p>}
               </li>
             ))}
           </ul>
         </section>
       )}
 
-      <section>
-        <h2 className="text-lg font-semibold mb-4">Articles</h2>
-        {standaloneArticles.length === 0 ? (
-          <p style={{ color: "var(--ink-soft)" }}>No articles yet.</p>
-        ) : (
-          <ul className="space-y-3">
+      {standaloneArticles.length > 0 ? (
+        <section>
+          <h2>Artikel</h2>
+          <ul>
             {standaloneArticles.map((a) => (
-              <li key={a.id} className="border-b pb-3" style={{ borderColor: "var(--line)" }}>
-                <Link href={`/articles/${a.slug}`} className="font-medium hover:underline">
+              <li key={a.id}>
+                <Link
+                  href={`/collections/${DEFAULT_COLLECTION_SLUG}/${a.slug}`}
+                >
                   {a.title}
                 </Link>
-                {a.excerpt && (
-                  <p className="text-sm mt-1" style={{ color: "var(--ink-soft)" }}>
-                    {a.excerpt}
-                  </p>
-                )}
+                {a.excerpt && <p>{a.excerpt}</p>}
               </li>
             ))}
           </ul>
-        )}
-      </section>
+        </section>
+      ) : (
+        <></>
+      )}
     </main>
   );
 }

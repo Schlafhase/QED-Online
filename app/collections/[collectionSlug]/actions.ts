@@ -3,13 +3,18 @@
 import { db } from "@/lib/db/client";
 import { collections } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { verifyPasscode, createUnlockToken, unlockCookieName } from "@/lib/auth";
+import {
+  verifyPasscode,
+  createUnlockToken,
+  unlockCookieName,
+} from "@/lib/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function unlockCollection(formData: FormData) {
   const slug = String(formData.get("slug") ?? "");
   const code = String(formData.get("code") ?? "");
+  const redirectOverride = String(formData.get("redirectOverride") ?? "");
 
   const [collection] = await db
     .select()
@@ -36,5 +41,5 @@ export async function unlockCollection(formData: FormData) {
     path: "/",
   });
 
-  redirect(`/collections/${slug}`);
+  redirect(redirectOverride || `/collections/${slug}`);
 }

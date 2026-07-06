@@ -3,11 +3,14 @@ import crypto from "node:crypto";
 
 const SECRET = process.env.AUTH_SECRET;
 if (!SECRET) {
-  throw new Error("AUTH_SECRET environment variable is not set. See .env.example.");
+  throw new Error(
+    "AUTH_SECRET environment variable is not set. See .env.example.",
+  );
 }
 
 const UNLOCK_COOKIE_PREFIX = "unlock_";
-const UNLOCK_TTL_MS = 1000 * 60 * 60 * 24 * 128; // 128d
+// const UNLOCK_TTL_MS = 1000 * 60 * 60 * 24 * 128; // 128d
+const UNLOCK_TTL_MS = 10_000;
 
 export async function hashPasscode(passcode: string) {
   return bcrypt.hash(passcode, 10);
@@ -32,7 +35,10 @@ export function createUnlockToken(collectionSlug: string) {
   return { value: `${expires}.${signature}`, expires: new Date(expires) };
 }
 
-export function verifyUnlockToken(collectionSlug: string, token: string | undefined) {
+export function verifyUnlockToken(
+  collectionSlug: string,
+  token: string | undefined,
+) {
   if (!token) return false;
   const [expiresStr, signature] = token.split(".");
   if (!expiresStr || !signature) return false;
@@ -59,7 +65,11 @@ const ADMIN_COOKIE_NAME = "admin_session";
 export function createAdminToken() {
   const expires = Date.now() + 1000 * 60 * 60 * 12; // 12h
   const signature = sign(`admin.${expires}`);
-  return { name: ADMIN_COOKIE_NAME, value: `${expires}.${signature}`, expires: new Date(expires) };
+  return {
+    name: ADMIN_COOKIE_NAME,
+    value: `${expires}.${signature}`,
+    expires: new Date(expires),
+  };
 }
 
 export function verifyAdminToken(token: string | undefined) {

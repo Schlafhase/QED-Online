@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db/client";
 import { articles, collections } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -14,6 +14,7 @@ import {
   hashPasscode,
 } from "@/lib/auth";
 import { parseFrontmatter, renderMarkdown } from "@/lib/markdown";
+import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
 
 export async function adminLogin(formData: FormData) {
   const password = String(formData.get("password") ?? "");
@@ -64,7 +65,25 @@ export async function uploadArticle(formData: FormData) {
 
   const file = formData.get("file") as File | null;
   const pastedMarkdown = String(formData.get("markdown") ?? "");
-  const collectionId = String(formData.get("collectionId") ?? "") || null;
+  const collectionId =
+    String(formData.get("collectionId") ?? DEFAULT_COLLECTION_SLUG) ||
+    DEFAULT_COLLECTION_SLUG;
+
+  console.log(collectionId);
+  if (collectionId == DEFAULT_COLLECTION_SLUG) {
+    const [defaultCollection] = await db
+      .select()
+      .from(collections)
+      .where(eq(collections.id, DEFAULT_COLLECTION_SLUG))
+      .limit(1);
+    if (!defaultCollection) {
+      await db.insert(collections).values({
+        id: DEFAULT_COLLECTION_SLUG,
+        slug: DEFAULT_COLLECTION_SLUG,
+        title: DEFAULT_COLLECTION_SLUG,
+      });
+    }
+  }
 
   const raw = file && file.size > 0 ? await file.text() : pastedMarkdown;
   if (!raw.trim()) redirect("/admin?error=empty");
@@ -77,12 +96,18 @@ export async function uploadArticle(formData: FormData) {
     title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "")
+      .replace(/(^-|-$)/g, "");
   const excerpt = frontmatter.excerpt ? String(frontmatter.excerpt) : null;
 
   const html = await renderMarkdown(body);
 
-  const [existing] = await db.select().from(articles).where(eq(articles.slug, slug)).limit(1);
+  const [existing] = await db
+    .select()
+    .from(articles)
+    .where(
+      and(eq(articles.collectionId, collectionId), eq(articles.slug, slug)),
+    )
+    .limit(1);
 
   if (existing) {
     await db
