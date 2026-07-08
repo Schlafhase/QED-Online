@@ -1,1 +1,39 @@
+main {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 
+  h1,
+  h2,
+  h3 {
+    text-align: center;
+  }
+
+  h2 {
+    border-width: 0px;
+    border-top: 2px;
+    border-color: grey;
+    padding-top: 25px;
+    border-style: solid;
+  }
+
+  @media (min-width: 600px) {
+    section {
+      width: max(50%, 500px);
+    }
+  }
+  @media (max-width: 600px) {
+    section {
+      width: 90%;
+    }
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+
+    textarea {
+      resize: vertical;
+    }
+  }
+}

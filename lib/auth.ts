@@ -4,7 +4,7 @@ import crypto from "node:crypto";
 const SECRET = process.env.AUTH_SECRET;
 if (!SECRET) {
   throw new Error(
-    "AUTH_SECRET environment variable is not set. See .env.example.",
+    "AUTH_SECRET environment variable is not set. See README for information",
   );
 }
 

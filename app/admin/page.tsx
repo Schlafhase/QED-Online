@@ -5,6 +5,7 @@ import { collections } from "@/lib/db/schema";
 import { adminLogin, createCollection, uploadArticle } from "./actions";
 import { ImageUploader } from "./ImageUploader";
 import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
+import { ne } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -29,53 +30,61 @@ export default async function AdminPage({
           <input
             type="password"
             name="password"
-            placeholder="Admin password"
+            placeholder="Admin Passwort"
             autoFocus
           />
-          <button type="submit">Sign in</button>
+          <button type="submit">Anmelden</button>
         </form>
-        {error && <p>Wrong password.</p>}
+        {error && <p>Falsches Passwort</p>}
       </main>
     );
   }
 
-  const allCollections = await db.select().from(collections);
+  const allCollections = await db
+    .select()
+    .from(collections)
+    .where(ne(collections.slug, DEFAULT_COLLECTION_SLUG));
 
   return (
     <main>
       <h1>Admin</h1>
 
-      {created === "collection" && <p>Collection created.</p>}
-      {published && <p>Published &ldquo;{published}&rdquo;.</p>}
-      {error === "missing-fields" && <p>Title and slug are required.</p>}
-      {error === "empty" && <p>Upload a file or paste some markdown first.</p>}
+      {created === "collection" && <p>Sammlung erstellt.</p>}
+      {published && <p>&ldquo;{published}&rdquo; veröffentlicht.</p>}
+      {error === "missing-fields" && (
+        <p>Titel und Slug müssen ausgefüllt werden.</p>
+      )}
+      {error === "empty" && (
+        <p>Es wurde kein Inhalt für den Artikel angegeben.</p>
+      )}
 
       <section>
-        <h2>New collection</h2>
+        <h2>Neue Sammlung</h2>
         <form action={createCollection}>
-          <input name="title" placeholder="Title" />
-          <input name="slug" placeholder="slug (e.g. travel-2026)" />
-          <input name="description" placeholder="Description (optional)" />
+          <input name="title" placeholder="Titel" />
+          <input name="slug" placeholder="Slug" />
+          <input name="description" placeholder="Beschreibung (optional)" />
           <input
             name="passcode"
-            placeholder="Passcode (leave blank for a public collection)"
+            placeholder="Code (freilassen für eine öffentliche Sammlung)"
           />
-          <button type="submit">Create collection</button>
+          <button type="submit">Sammlung erstellen</button>
         </form>
       </section>
 
       <section>
-        <h2>Upload article</h2>
+        <h2>Artikel hochladen</h2>
         <p>
-          Upload a .md file, or paste markdown below. Include frontmatter for
-          title/slug/excerpt:
+          Artikel werden in Markdown geschrieben. Du kannst eine Datei hochladen
+          oder direkt in das Textfeld schreiben. Um Titel/slug/Auszug
+          festzulegen, wird ein frontmatter verwendet:
         </p>
         <pre>{`---
-title: My Post
-slug: my-post
-excerpt: A short teaser
+title: Mein Artikel
+slug: mein-artikel
+excerpt: Sehr spannender Text...
 ---
-Article body here...`}</pre>
+Hier geht der Artikel los...`}</pre>
 
         <div>
           <ImageUploader />
