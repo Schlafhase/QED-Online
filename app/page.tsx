@@ -3,6 +3,7 @@ import { db } from "@/lib/db/client";
 import { articles, collections } from "@/lib/db/schema";
 import { desc, eq, ne } from "drizzle-orm";
 import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
+import { Title } from "@mantine/core";
 
 export const dynamic = "force-dynamic";
 
@@ -19,10 +20,6 @@ export default async function HomePage() {
 
   return (
     <main>
-      <header>
-        <h1>QED Online</h1>
-      </header>
-
       {allCollections.length > 0 && (
         <section>
           <h2>Ausgaben</h2>

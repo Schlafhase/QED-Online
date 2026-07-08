@@ -15,6 +15,7 @@ import {
 } from "@/lib/auth";
 import { parseFrontmatter, renderMarkdown } from "@/lib/markdown";
 import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
+import { validSlug } from "@/lib/slug";
 
 export async function adminLogin(formData: FormData) {
   const password = String(formData.get("password") ?? "");
@@ -48,6 +49,7 @@ export async function createCollection(formData: FormData) {
   const passcode = String(formData.get("passcode") ?? "").trim();
 
   if (!title || !slug) redirect("/admin?error=missing-fields");
+  if (!validSlug(slug)) redirect("/admin?error=invalid-fields");
 
   await db.insert(collections).values({
     id: nanoid(),
@@ -97,7 +99,8 @@ export async function uploadArticle(formData: FormData) {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-  // TODO: da
+  if (!validSlug(slug)) redirect("/admin?error=invalid-fields");
+
   const excerpt = frontmatter.excerpt ? String(frontmatter.excerpt) : null;
 
   const html = await renderMarkdown(body);

@@ -6,6 +6,9 @@ import { adminLogin, createCollection, uploadArticle } from "./actions";
 import { ImageUploader } from "./ImageUploader";
 import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
 import { ne } from "drizzle-orm";
+import { SlugInput } from "@/lib/components/SlugInput";
+import { MDXEditor } from "@mdxeditor/editor";
+import { MDEditor } from "@/lib/components/MDEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -62,7 +65,7 @@ export default async function AdminPage({
         <h2>Neue Sammlung</h2>
         <form action={createCollection}>
           <input name="title" placeholder="Titel" />
-          <input name="slug" placeholder="Slug" />
+          <SlugInput name="slug" placeholder="Slug" />
           <input name="description" placeholder="Beschreibung (optional)" />
           <input
             name="passcode"
@@ -110,6 +113,7 @@ Hier geht der Artikel los...`}</pre>
             ))}
           </select>
           <input type="file" name="file" accept=".md,text/markdown" />
+          <MDEditor markdown="hi" />
           <textarea
             name="markdown"
             rows={8}
