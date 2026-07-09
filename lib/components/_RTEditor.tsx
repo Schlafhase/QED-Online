@@ -7,6 +7,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import Placeholder from "@tiptap/extension-placeholder";
+import Typography from "@tiptap/extension-typography";
 import { forwardRef, useImperativeHandle } from "react";
 
 export type RTEditorHandle = {
@@ -33,6 +34,12 @@ const _RTEditor = forwardRef<RTEditorHandle, RTEdiorProps>(function _RTEditor(
       SubScript,
       Highlight,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
+      Typography.configure({
+        openDoubleQuote: "„",
+        closeDoubleQuote: "“",
+        openSingleQuote: "‚",
+        closeSingleQuote: "‘",
+      }),
     ],
   });
 
