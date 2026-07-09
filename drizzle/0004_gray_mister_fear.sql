@@ -1,0 +1,1 @@
+ALTER TABLE `articles` ADD `show_date` boolean;

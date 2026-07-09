@@ -1,9 +1,16 @@
+import { boolean } from "drizzle-orm/gel-core";
 import {
   sqliteTable,
   text,
   integer,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+
+export const editions = sqliteTable("editions", {
+  id: text("id").primaryKey(),
+  releaseDate: integer("release_date", { mode: "timestamp" }).notNull(),
+  editionNo: integer("edition_no").notNull(),
+});
 
 export const collections = sqliteTable("collections", {
   id: text("id").primaryKey(),
@@ -14,6 +21,9 @@ export const collections = sqliteTable("collections", {
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
+  editionId: text("edition_id")
+    .unique()
+    .references(() => editions.id),
 });
 
 export const articles = sqliteTable(
@@ -26,11 +36,12 @@ export const articles = sqliteTable(
     slug: text("slug").notNull(),
     title: text("title").notNull(),
     excerpt: text("excerpt"),
-    markdownBody: text("markdown_body").notNull(),
     renderedHtml: text("rendered_html").notNull(),
+    plainText: text("plain_text").notNull(),
     publishedAt: integer("published_at", { mode: "timestamp" })
       .notNull()
       .$defaultFn(() => new Date()),
+    showDate: integer("show_date", { mode: "boolean" }),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
       .$defaultFn(() => new Date()),

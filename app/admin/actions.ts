@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db/client";
-import { articles, collections } from "@/lib/db/schema";
+import { articles, collections, editions } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { cookies } from "next/headers";
@@ -13,9 +13,10 @@ import {
   ADMIN_COOKIE_NAME,
   hashPasscode,
 } from "@/lib/auth";
-import { parseFrontmatter, renderMarkdown } from "@/lib/markdown";
 import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
 import { validSlug } from "@/lib/slug";
+import { InvalidFieldError, MissingFieldError } from "@/lib/errors";
+import { revalidatePath } from "next/cache";
 
 export async function adminLogin(formData: FormData) {
   const password = String(formData.get("password") ?? "");
@@ -39,6 +40,37 @@ async function requireAdmin() {
   const ok = verifyAdminToken(store.get(ADMIN_COOKIE_NAME)?.value);
   if (!ok) redirect("/admin");
 }
+export async function createEdition(formData: FormData) {
+  await requireAdmin();
+
+  const title = String(formData.get("title") ?? "").trim();
+  const slug = String(formData.get("slug") ?? "").trim();
+  const number = parseInt(String(formData.get("editionNumber") ?? "0"));
+  const release = new Date(String(formData.get("release")));
+  const passcode = String(formData.get("passcode") ?? "").trim();
+  const id = nanoid();
+
+  if (!title || !slug || number === 0 || release === null || !passcode)
+    throw new MissingFieldError();
+  if (!validSlug(slug)) throw new InvalidFieldError();
+
+  await db.insert(editions).values({
+    id: id,
+    editionNo: number,
+    releaseDate: release,
+  });
+
+  await db.insert(collections).values({
+    id: nanoid(),
+    editionId: id,
+    title,
+    slug,
+    description: `Ausgabe Nr. ${number} - ${release.getFullYear()}`,
+    passcodeHash: passcode ? await hashPasscode(passcode) : null,
+  });
+
+  revalidatePath("/admin");
+}
 
 export async function createCollection(formData: FormData) {
   await requireAdmin();
@@ -48,8 +80,8 @@ export async function createCollection(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const passcode = String(formData.get("passcode") ?? "").trim();
 
-  if (!title || !slug) redirect("/admin?error=missing-fields");
-  if (!validSlug(slug)) redirect("/admin?error=invalid-fields");
+  if (!title || !slug) throw new MissingFieldError();
+  if (!validSlug(slug)) throw new InvalidFieldError();
 
   await db.insert(collections).values({
     id: nanoid(),
@@ -58,20 +90,16 @@ export async function createCollection(formData: FormData) {
     description: description || null,
     passcodeHash: passcode ? await hashPasscode(passcode) : null,
   });
-
-  redirect("/admin?created=collection");
+  revalidatePath("/admin");
 }
 
 export async function uploadArticle(formData: FormData) {
   await requireAdmin();
 
-  const file = formData.get("file") as File | null;
-  const pastedMarkdown = String(formData.get("markdown") ?? "");
   const collectionId =
     String(formData.get("collectionId") ?? DEFAULT_COLLECTION_SLUG) ||
     DEFAULT_COLLECTION_SLUG;
 
-  console.log(collectionId);
   if (collectionId == DEFAULT_COLLECTION_SLUG) {
     const [defaultCollection] = await db
       .select()
@@ -87,23 +115,18 @@ export async function uploadArticle(formData: FormData) {
     }
   }
 
-  const raw = file && file.size > 0 ? await file.text() : pastedMarkdown;
-  if (!raw.trim()) redirect("/admin?error=empty");
+  const title = String(formData.get("title") ?? "") || "";
+  const slug = String(formData.get("slug") ?? "") || "";
+  if (!title || !slug) throw new MissingFieldError();
+  if (!validSlug(slug)) throw new InvalidFieldError();
 
-  const { frontmatter, body } = parseFrontmatter(raw);
+  const html = String(formData.get("html") ?? "") || "";
+  const plainText = String(formData.get("text") ?? "") || "";
+  const showDate = formData.get("showDate") === "on";
 
-  const title = String(frontmatter.title ?? "Untitled");
-  const slug =
-    String(frontmatter.slug ?? "") ||
-    title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-  if (!validSlug(slug)) redirect("/admin?error=invalid-fields");
-
-  const excerpt = frontmatter.excerpt ? String(frontmatter.excerpt) : null;
-
-  const html = await renderMarkdown(body);
+  if (!html || !plainText) {
+    throw new MissingFieldError();
+  }
 
   const [existing] = await db
     .select()
@@ -118,10 +141,10 @@ export async function uploadArticle(formData: FormData) {
       .update(articles)
       .set({
         title,
-        excerpt,
-        markdownBody: body,
+        plainText,
         renderedHtml: html,
         collectionId,
+        showDate,
         updatedAt: new Date(),
       })
       .where(eq(articles.id, existing.id));
@@ -130,12 +153,11 @@ export async function uploadArticle(formData: FormData) {
       id: nanoid(),
       slug,
       title,
-      excerpt,
-      markdownBody: body,
+      plainText,
       renderedHtml: html,
+      publishedAt: new Date(),
       collectionId,
+      showDate,
     });
   }
-
-  redirect(`/admin?published=${slug}`);
 }

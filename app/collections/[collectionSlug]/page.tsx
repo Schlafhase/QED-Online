@@ -6,6 +6,18 @@ import { verifyUnlockToken, unlockCookieName } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { unlockCollection } from "./actions";
+import {
+  ActionIcon,
+  Card,
+  Center,
+  Grid,
+  GridCol,
+  Group,
+  PasswordInput,
+  Title,
+} from "@mantine/core";
+import { ArrowRightIcon } from "@phosphor-icons/react";
+import PWInput from "@/lib/components/PWInput";
 
 export const dynamic = "force-dynamic";
 
@@ -39,21 +51,25 @@ export default async function CollectionPage({
   if (isLocked && !isUnlocked) {
     return (
       <main>
-        <h1>{collection.title}</h1>
-        <p>This collection is locked. Enter the code to view it.</p>
-        <form action={unlockCollection}>
-          {redirectArticle && (
-            <input
-              type="hidden"
-              name="redirectOverride"
-              value={`/collections/${collectionSlug}/${redirectArticle}`}
-            />
-          )}
-          <input type="hidden" name="slug" value={collectionSlug} />
-          <input type="password" name="code" placeholder="Code" autoFocus />
-          <button type="submit">Unlock</button>
-        </form>
-        {error && <p>Incorrect code, try again.</p>}
+        <Center mt={50}>
+          <Card withBorder maw={500}>
+            <Title>{collection.title}</Title>
+            <p>
+              Diese Artikelsammlung muss mit einem Code freigeschaltet werden.
+            </p>
+            <form action={unlockCollection} autoComplete="off">
+              {redirectArticle && (
+                <input
+                  type="hidden"
+                  name="redirectOverride"
+                  value={`/collections/${collectionSlug}/${redirectArticle}`}
+                />
+              )}
+              <input type="hidden" name="slug" value={collectionSlug} />
+              <PWInput error={error ? true : false} />
+            </form>
+          </Card>
+        </Center>
       </main>
     );
   }

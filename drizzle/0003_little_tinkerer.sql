@@ -1,0 +1,1 @@
+ALTER TABLE `articles` RENAME COLUMN "markdown_body" TO "plain_text";

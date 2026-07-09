@@ -15,6 +15,34 @@
       "when": 1783351084587,
       "tag": "0001_bizarre_spacker_dave",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783592694808,
+      "tag": "0002_familiar_the_professor",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1783600988602,
+      "tag": "0003_little_tinkerer",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1783605215041,
+      "tag": "0004_gray_mister_fear",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1783606284269,
+      "tag": "0005_sloppy_white_queen",
+      "breakpoints": true
     }
   ]
 }

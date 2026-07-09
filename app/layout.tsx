@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import "@mantine/core/styles.css";
+import "@mantine/tiptap/styles.css";
+import "@mantine/dates/styles.css";
+import "@mantine/notifications/styles.css";
 import "./globals.css";
 import {
   AppShell,
   AppShellHeader,
   AppShellMain,
   ColorSchemeScript,
+  Container,
   createTheme,
   mantineHtmlProps,
   MantineProvider,
@@ -14,6 +18,7 @@ import { AppHeader } from "@/lib/components/AppHeader";
 import { Cormorant_Garamond, Lora, Noto_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { AppFooter } from "@/lib/components/AppFooter";
+import { Notifications } from "@mantine/notifications";
 
 const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
@@ -43,7 +48,6 @@ export const metadata: Metadata = {
 const theme = createTheme({
   fontFamily: `var(--font-lora), serif`,
   headings: {
-    // fontFamily: `var(--font-cormorant-garamond), serif`,
     fontFamily: `var(--font-cmu), serif`,
     fontWeight: "400",
   },
@@ -67,11 +71,14 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider defaultColorScheme="auto" theme={theme}>
-          <AppShell padding="md" header={{ height: 50 }}>
+          <Notifications />
+          <AppShell padding="md" header={{ height: 60 }}>
             <AppShellHeader>
               <AppHeader />
             </AppShellHeader>
-            <AppShellMain>{children}</AppShellMain>
+            <AppShellMain>
+              <Container>{children}</Container>
+            </AppShellMain>
             <AppFooter />
           </AppShell>
         </MantineProvider>

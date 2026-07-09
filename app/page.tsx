@@ -3,7 +3,7 @@ import { db } from "@/lib/db/client";
 import { articles, collections } from "@/lib/db/schema";
 import { desc, eq, ne } from "drizzle-orm";
 import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
-import { Title } from "@mantine/core";
+import { Center, Container, Title } from "@mantine/core";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,7 @@ export default async function HomePage() {
     <main>
       {allCollections.length > 0 && (
         <section>
-          <h2>Ausgaben</h2>
+          <Title>Ausgaben</Title>
           <ul>
             {allCollections.map((c) => (
               <li key={c.id}>

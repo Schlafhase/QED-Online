@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { sanitiseSlugInput, SLUG_REGEX, slugify } from "../slug";
+import { TextInput } from "@mantine/core";
 
 export function SlugInput({
   name,
@@ -15,17 +16,19 @@ export function SlugInput({
   const [value, setValue] = useState(defaultValue);
 
   return (
-    <input
+    <TextInput
       name={name}
+      label="Slug"
       value={value}
       onChange={(e) => setValue(sanitiseSlugInput(e.target.value))}
       onBlur={() => setValue((v) => slugify(v))}
       placeholder={placeholder}
       pattern={SLUG_REGEX.source}
-      title="Nur Kleinbuchstaben, Zahlen und Bindestriche"
+      description="Nur Kleinbuchstaben, Zahlen und Bindestriche"
       spellCheck={false}
       autoCapitalize="off"
       autoCorrect="off"
+      withAsterisk
     />
   );
 }
