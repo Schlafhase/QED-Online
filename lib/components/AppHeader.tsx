@@ -6,7 +6,7 @@ export function AppHeader() {
   return (
     <Group h={"100%"} px={20} align="center" justify="space-between">
       <Anchor underline="never" href="/">
-        <Title style={{ color: "var(--mantine-color-text)" }}>QED</Title>
+        <Title style={{ color: "var(--mantine-color-bright)" }}>QED</Title>
       </Anchor>
       <ThemeSwitcher />
     </Group>
