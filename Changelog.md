@@ -5,5 +5,6 @@
 - [ ] Image and video support in the article editor
 - [ ] Rate Limit protection in password fields
 - [ ] Styling of remaining unstyled pages
-- [ ] Descriptive text on the start page
+- [x] Descriptive text on the start page
+  - [ ] Improve the text
 - [ ] Informative pages
