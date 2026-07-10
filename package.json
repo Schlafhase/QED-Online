@@ -21,6 +21,7 @@
     "@mantine/tiptap": "^9.4.1",
     "@mdxeditor/editor": "^4.0.4",
     "@phosphor-icons/react": "^2.1.10",
+    "@tiptap/core": "^3.27.3",
     "@tiptap/extension-highlight": "^3.27.3",
     "@tiptap/extension-link": "^3.27.3",
     "@tiptap/extension-placeholder": "^3.27.3",

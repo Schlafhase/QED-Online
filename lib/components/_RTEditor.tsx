@@ -1,5 +1,7 @@
 "use client";
 import { RichTextEditor, Link } from "@mantine/tiptap";
+import { Mark } from "@tiptap/core";
+import { Plugin } from "@tiptap/pm/state";
 import { useEditor } from "@tiptap/react";
 import Highlight from "@tiptap/extension-highlight";
 import StarterKit from "@tiptap/starter-kit";
@@ -9,6 +11,55 @@ import SubScript from "@tiptap/extension-subscript";
 import Placeholder from "@tiptap/extension-placeholder";
 import Typography from "@tiptap/extension-typography";
 import { forwardRef, useImperativeHandle } from "react";
+
+const QedFont = Mark.create({
+  name: "qedFont",
+  inclusive: false,
+
+  parseHTML() {
+    return [
+      {
+        tag: 'span[style*="font-family: var(--font-cmu)"]',
+      },
+    ];
+  },
+
+  renderHTML() {
+    return ["span", { style: "font-family: var(--font-cmu)" }, 0];
+  },
+});
+
+const QedTypography = Typography.extend({
+  addProseMirrorPlugins() {
+    const qedFont = this.editor.schema.marks.qedFont;
+
+    return [
+      ...(this.parent?.() ?? []),
+      new Plugin({
+        appendTransaction(transactions, _oldState, newState) {
+          if (!transactions.some((transaction) => transaction.docChanged)) {
+            return null;
+          }
+
+          const transaction = newState.tr;
+
+          newState.doc.descendants((node, position) => {
+            if (!node.isText || qedFont.isInSet(node.marks)) {
+              return;
+            }
+
+            for (const match of node.text?.matchAll(/QED/g) ?? []) {
+              const from = position + (match.index ?? 0);
+              transaction.addMark(from, from + 3, qedFont.create());
+            }
+          });
+
+          return transaction.steps.length > 0 ? transaction : null;
+        },
+      }),
+    ];
+  },
+});
 
 export type RTEditorHandle = {
   getHTML: () => string;
@@ -33,8 +84,9 @@ const _RTEditor = forwardRef<RTEditorHandle, RTEdiorProps>(function _RTEditor(
       Superscript,
       SubScript,
       Highlight,
+      QedFont,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Typography.configure({
+      QedTypography.configure({
         openDoubleQuote: "„",
         closeDoubleQuote: "“",
         openSingleQuote: "‚",
