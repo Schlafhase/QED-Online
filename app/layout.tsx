@@ -76,7 +76,7 @@ export default function RootLayout({
             <AppShellHeader>
               <AppHeader />
             </AppShellHeader>
-            <AppShellMain>
+            <AppShellMain mih={"calc(100cqh - var(--app-shell-header-offset))"}>
               <Container>{children}</Container>
             </AppShellMain>
             <AppFooter />

@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { verifyUnlockToken, unlockCookieName } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
-import { Title } from "@mantine/core";
+import { Container, Title } from "@mantine/core";
 
 export const dynamic = "force-dynamic";
 
@@ -49,22 +49,27 @@ export default async function ArticlePage({
 
   return (
     <main>
-      <article>
-        <header>
-          <Title order={1} size={50}>
-            {article.title}
-          </Title>
-          {article.showDate && (
-            <p
-              className="minor"
-              style={{ fontFamily: "var(--font-noto-sans)" }}
-            >
-              {new Date(article.publishedAt).toLocaleDateString()}
-            </p>
-          )}
-        </header>
-        <div dangerouslySetInnerHTML={{ __html: article.renderedHtml }} />
-      </article>
+      <Container maw={"max(700px, 40vw)"}>
+        <article>
+          <header>
+            <Title order={1} size={50}>
+              {article.title}
+            </Title>
+            {article.showDate && (
+              <p
+                className="minor"
+                style={{ fontFamily: "var(--font-noto-sans)" }}
+              >
+                {new Date(article.publishedAt).toLocaleDateString()}
+              </p>
+            )}
+          </header>
+          <div
+            style={{ textAlign: "justify" }}
+            dangerouslySetInnerHTML={{ __html: article.renderedHtml }}
+          />
+        </article>
+      </Container>
     </main>
   );
 }
