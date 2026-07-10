@@ -1,5 +1,3 @@
-<!-- conform-ignore -->
-
 # About
 
 This website is the online counterpart of the physical student publication "QED"
@@ -24,6 +22,14 @@ articles, accessible for free, whenever they feel like it.
 >
 > Posts, collections and editions are specified in the database schema at
 > `lib/db/schema.ts`.
+
+# AI Usage
+
+Since this is my first time using Next.js ever, I asked AI to generate a starter
+app that did roughly what I needed. I reviewed every single line it generated
+carefully. Looking at the code helped me understand Next.js and React concepts
+quickly. After that, I only used AI to help me with some Next.js specific issues
+but not for code generation.
 
 # Setup
 
