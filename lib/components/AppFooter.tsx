@@ -27,7 +27,7 @@ export function AppFooter() {
         <div>
           <Title order={3}>Über uns</Title>
           <Space h={10} />
-          <Stack gap={0}>
+          <Stack className="minor" gap={0}>
             <Anchor>Redaktion</Anchor>
             <Anchor>Impressum</Anchor>
             <Anchor>Archiv</Anchor>
