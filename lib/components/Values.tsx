@@ -17,7 +17,7 @@ export default function Values() {
         Die wichtigsten Aspekte, die wir beim HertzSchlag unbefriedigend fanden,
         waren:
       </p>
-      <Text className="minor" fs={"italic"} mb={"md"}>
+      <Text c={"dimmed"} fs={"italic"} mb={"md"}>
         Die Aspekte beziehen sich natürlich nur auf den HertzSchlag zu dem
         damaligen Zeitpunkt (2025/2026). Wie sich der HertzSchlag
         weiterentwickeln wird ist unklar.

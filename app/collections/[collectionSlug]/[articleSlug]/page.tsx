@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { verifyUnlockToken, unlockCookieName } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
-import { Container, Title, Typography } from "@mantine/core";
+import { Container, Title, Typography, Text } from "@mantine/core";
 import "./article.css";
 
 export const dynamic = "force-dynamic";
@@ -57,18 +57,21 @@ export default async function ArticlePage({
               {article.title}
             </Title>
             {article.showDate && (
-              <p
-                className="minor"
+              <Text
+                my={"md"}
+                c={"dimmed"}
                 style={{ fontFamily: "var(--font-noto-sans)" }}
               >
                 {new Date(article.publishedAt).toLocaleDateString()}
-              </p>
+              </Text>
             )}
           </header>
-          <div
-            className="articleContent"
-            dangerouslySetInnerHTML={{ __html: article.renderedHtml }}
-          />
+          <Typography>
+            <div
+              className="articleContent"
+              dangerouslySetInnerHTML={{ __html: article.renderedHtml }}
+            />
+          </Typography>
         </article>
       </Container>
     </main>

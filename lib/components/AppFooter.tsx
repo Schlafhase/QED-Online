@@ -1,12 +1,11 @@
 import {
   Anchor,
   Divider,
-  Grid,
-  GridCol,
   SimpleGrid,
   Space,
   Stack,
   Title,
+  Text,
 } from "@mantine/core";
 import "./AppFooter.tsx.css";
 
@@ -18,16 +17,16 @@ export function AppFooter() {
         <div>
           <Title order={3}>QED</Title>
           <Space h={10} />
-          <span className="minor">
+          <Text c={"dimmed"}>
             Eine unabhängige Schüler*innenzeitung am{" "}
             <Anchor href="https://hhgym.de">Heinrich-Hertz-Gymnasium</Anchor>.
-          </span>
+          </Text>
         </div>
         <div></div>
         <div>
           <Title order={3}>Über uns</Title>
           <Space h={10} />
-          <Stack className="minor" gap={0}>
+          <Stack c={"dimmed"} gap={0}>
             <Anchor>Redaktion</Anchor>
             <Anchor>Impressum</Anchor>
             <Anchor>Archiv</Anchor>
