@@ -40,6 +40,11 @@ const cmu = localFont({
   variable: "--font-cmu",
 });
 
+const cmuBold = localFont({
+  src: "../fonts/cmunbx.ttf",
+  variable: "--font-cmu-bold",
+});
+
 export const metadata: Metadata = {
   title: "QED Online",
   description: "Zusätzliche digitale Medien zur QED Schülerzeitung",
@@ -64,7 +69,7 @@ export default function RootLayout({
     <html
       lang="de"
       {...mantineHtmlProps}
-      className={`${lora.variable} ${cormorantGaramond.variable} ${notoSans.variable} ${cmu.variable}`}
+      className={`${lora.variable} ${cormorantGaramond.variable} ${notoSans.variable} ${cmu.variable} ${cmuBold.variable}`}
     >
       <head>
         <ColorSchemeScript />

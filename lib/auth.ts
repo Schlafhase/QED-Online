@@ -9,8 +9,8 @@ if (!SECRET) {
 }
 
 const UNLOCK_COOKIE_PREFIX = "unlock_";
-// const UNLOCK_TTL_MS = 1000 * 60 * 60 * 24 * 128; // 128d
-const UNLOCK_TTL_MS = 10_000;
+const UNLOCK_TTL_MS = 1000 * 60 * 60 * 24 * 128; // 128d
+// const UNLOCK_TTL_MS = 10_000;
 
 export async function hashPasscode(passcode: string) {
   return bcrypt.hash(passcode, 10);
@@ -24,19 +24,19 @@ function sign(value: string) {
   return crypto.createHmac("sha256", SECRET!).update(value).digest("hex");
 }
 
-export function unlockCookieName(collectionSlug: string) {
-  return `${UNLOCK_COOKIE_PREFIX}${collectionSlug}`;
+export function unlockCookieName(collectionId: string) {
+  return `${UNLOCK_COOKIE_PREFIX}${collectionId}`;
 }
 
-export function createUnlockToken(collectionSlug: string) {
+export function createUnlockToken(collectionId: string) {
   const expires = Date.now() + UNLOCK_TTL_MS;
-  const payload = `${collectionSlug}.${expires}`;
+  const payload = `${collectionId}.${expires}`;
   const signature = sign(payload);
   return { value: `${expires}.${signature}`, expires: new Date(expires) };
 }
 
 export function verifyUnlockToken(
-  collectionSlug: string,
+  collectionId: string,
   token: string | undefined,
 ) {
   if (!token) return false;
@@ -46,7 +46,7 @@ export function verifyUnlockToken(
   const expires = Number(expiresStr);
   if (!Number.isFinite(expires) || Date.now() > expires) return false;
 
-  const expected = sign(`${collectionSlug}.${expiresStr}`);
+  const expected = sign(`${collectionId}.${expiresStr}`);
   const a = Buffer.from(signature);
   const b = Buffer.from(expected);
   return a.length === b.length && crypto.timingSafeEqual(a, b);

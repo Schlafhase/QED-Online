@@ -11,6 +11,7 @@ import SubScript from "@tiptap/extension-subscript";
 import Placeholder from "@tiptap/extension-placeholder";
 import Typography from "@tiptap/extension-typography";
 import { forwardRef, useImperativeHandle } from "react";
+import "@/app/collections/[collectionSlug]/[articleSlug]/article.css";
 
 const QedFont = Mark.create({
   name: "qedFont",
@@ -101,7 +102,7 @@ const _RTEditor = forwardRef<RTEditorHandle, RTEdiorProps>(function _RTEditor(
   }));
 
   return (
-    <div style={{ textAlign: "justify" }}>
+    <div className="articleContent">
       <RichTextEditor editor={editor} mih={300}>
         <RichTextEditor.Toolbar
           sticky

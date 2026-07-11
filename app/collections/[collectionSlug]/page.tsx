@@ -44,8 +44,8 @@ export default async function CollectionPage({
   const isUnlocked =
     !isLocked ||
     verifyUnlockToken(
-      collectionSlug,
-      store.get(unlockCookieName(collectionSlug))?.value,
+      collection.id,
+      store.get(unlockCookieName(collection.id))?.value,
     );
 
   if (isLocked && !isUnlocked) {

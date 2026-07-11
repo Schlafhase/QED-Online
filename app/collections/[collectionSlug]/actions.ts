@@ -31,9 +31,9 @@ export async function unlockCollection(formData: FormData) {
     redirect(`/collections/${slug}?error=1`);
   }
 
-  const { value, expires } = createUnlockToken(slug);
+  const { value, expires } = createUnlockToken(collection.id);
   const store = await cookies();
-  store.set(unlockCookieName(slug), value, {
+  store.set(unlockCookieName(collection.id), value, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

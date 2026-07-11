@@ -4,7 +4,8 @@ import { and, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { verifyUnlockToken, unlockCookieName } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
-import { Container, Title } from "@mantine/core";
+import { Container, Title, Typography } from "@mantine/core";
+import "./article.css";
 
 export const dynamic = "force-dynamic";
 
@@ -26,8 +27,8 @@ export default async function ArticlePage({
   if (collection.passcodeHash) {
     const store = await cookies();
     const unlocked = verifyUnlockToken(
-      collection.slug,
-      store.get(unlockCookieName(collection.slug))?.value,
+      collection.id,
+      store.get(unlockCookieName(collection.id))?.value,
     );
     if (!unlocked)
       redirect(
@@ -65,7 +66,7 @@ export default async function ArticlePage({
             )}
           </header>
           <div
-            style={{ textAlign: "justify" }}
+            className="articleContent"
             dangerouslySetInnerHTML={{ __html: article.renderedHtml }}
           />
         </article>
