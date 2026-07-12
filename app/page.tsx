@@ -6,6 +6,7 @@ import { DEFAULT_COLLECTION_SLUG } from "@/lib/defaultCollection";
 import { Image, Space, Title } from "@mantine/core";
 import About from "@/lib/components/About";
 import Values from "@/lib/components/Values";
+import TesterInformation from "@/lib/components/TesterInformation";
 
 export const dynamic = "force-dynamic";
 
@@ -24,14 +25,17 @@ export default async function HomePage() {
 
   return (
     <main>
-      <Image w={"100%"} h={300} mb={"md"}></Image>
+      <section>
+        <Image w={"100%"} h={300} mb={"md"}></Image>
+        <div style={{ textAlign: "justify" }}>
+          {process.env.INSTANCE === "test" && <TesterInformation />}
+          <About />
+          <Values />
+        </div>
+      </section>
+      <Space h={200} />
       {allCollections.length > 0 && (
         <section>
-          <div style={{ textAlign: "justify" }}>
-            <About />
-            <Values />
-          </div>
-          <Space h={200} />
           <Title>Ausgaben</Title>
           <ul>
             {allCollections.map((c) => (
